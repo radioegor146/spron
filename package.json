@@ -3,7 +3,8 @@
   "description": "Intelligent NSFW storage system",
   "license": "AGPL-3.0-only",
   "scripts": {
-    "lint": "turbo run lint"
+    "lint": "turbo run lint",
+    "build": "turbo run build"
   },
   "devDependencies": {
     "@bksp/style-guide": "^1.3.0",

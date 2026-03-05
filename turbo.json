@@ -4,6 +4,9 @@
   "tasks": {
     "lint": {
       "dependsOn": ["^lint"]
+    },
+    "build": {
+      "dependsOn": ["^build"]
     }
   }
 }
