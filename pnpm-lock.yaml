@@ -154,6 +154,9 @@ importers:
       '@spron/database':
         specifier: workspace:*
         version: link:../../packages/database
+      '@spron/enrichers':
+        specifier: workspace:*
+        version: link:../../packages/enrichers
       '@spron/utils':
         specifier: workspace:*
         version: link:../../packages/utils
@@ -214,6 +217,19 @@ importers:
       prisma:
         specifier: ^7.4.2
         version: 7.4.2(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@5.9.2)
+
+  packages/enrichers:
+    dependencies:
+      zod:
+        specifier: ^4.3.6
+        version: 4.3.6
+    devDependencies:
+      '@spron/eslint':
+        specifier: workspace:*
+        version: link:../eslint
+      '@spron/tsconfig':
+        specifier: workspace:*
+        version: link:../tsconfig
 
   packages/eslint:
     devDependencies:

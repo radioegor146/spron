@@ -1,6 +1,7 @@
 import 'dotenv/config'
 import { CollectorPostData, collectorPostDataType } from '@spron/collectors'
-import { createClient, Image, Video } from '@spron/database'
+import { createClient } from '@spron/database'
+import { EnricherJobName } from '@spron/enrichers'
 import { getLogger } from '@spron/utils'
 import { FlowProducer, Job, Worker } from 'bullmq'
 
@@ -30,7 +31,24 @@ async function jobProcessor (job: Job<CollectorPostData>): Promise<void> {
   }
   logger.debug(`received collector data: ${JSON.stringify(collectorPostData)}`)
 
-  await prisma.$transaction(async txn => {
+  const { images, post, videos } = await prisma.$transaction(async txn => {
+    const existingPost = await txn.post.findFirst({
+      include: {
+        images: true,
+        videos: true
+      },
+      where: {
+        collectorId: collectorPostData.id
+      }
+    })
+    if (existingPost) {
+      logger.warn(`received already existing post '${existingPost.collectorId}', retrying in queue`)
+      return {
+        images: existingPost.images,
+        post: existingPost,
+        videos: existingPost.videos
+      }
+    }
     const source = await txn.source.upsert({
       create: {
         type: collectorPostData.source.type
@@ -70,7 +88,7 @@ async function jobProcessor (job: Job<CollectorPostData>): Promise<void> {
         url: collectorPostData.url
       }
     })
-    const images: Image[] = await txn.image.createManyAndReturn({
+    const images = await txn.image.createManyAndReturn({
       data: collectorPostData.content.images.map(image => ({
         collectorMetadata: image.metadata as InputJsonObject,
         postId: post.id,
@@ -78,7 +96,7 @@ async function jobProcessor (job: Job<CollectorPostData>): Promise<void> {
         storageKey: image.key
       }))
     })
-    const videos: Video[] = await txn.video.createManyAndReturn({
+    const videos = await txn.video.createManyAndReturn({
       data: collectorPostData.content.videos.map(video => ({
         collectorMetadata: video.metadata as InputJsonObject,
         postId: post.id,
@@ -87,32 +105,64 @@ async function jobProcessor (job: Job<CollectorPostData>): Promise<void> {
       }))
     })
 
-    await enrichersFlowProducer.addBulk([
-      ...(environment.POST_ENRICHER_QUEUE_NAMES.map(queue => ({
-        data: post.id,
-        name: `post-${post.id}`,
-        queueName: queue
-      }))),
-      ...(environment.IMAGE_ENRICHER_QUEUE_NAMES.flatMap(queue => images.map(image => ({
-        data: image.id,
-        name: `image-${image.id}`,
-        queueName: queue
-      })))),
-      ...(environment.VIDEO_ENRICHER_QUEUE_NAMES.flatMap(queue => videos.map(video => ({
-        data: video.id,
-        name: `video-${video.id}`,
-        queueName: queue
-      })))),
-    ])
+    return {
+      images,
+      post,
+      videos
+    }
   })
+
+  await enrichersFlowProducer.addBulk([
+    ...(environment.POST_ENRICHER_QUEUE_NAMES.map(queue => ({
+      backoff: {
+        type: 'custom'
+      },
+      data: post.id,
+      name: EnricherJobName.ENRICH_POST,
+      queueName: queue
+    }))),
+    ...(environment.IMAGE_ENRICHER_QUEUE_NAMES.flatMap(queue => images.map(image => ({
+      backoff: {
+        type: 'custom'
+      },
+      data: image.id,
+      name: EnricherJobName.ENRICH_IMAGE,
+      queueName: queue
+    })))),
+    ...(environment.VIDEO_ENRICHER_QUEUE_NAMES.flatMap(queue => videos.map(video => ({
+      backoff: {
+        type: 'custom'
+      },
+      data: video.id,
+      name: EnricherJobName.ENRICH_VIDEO,
+      queueName: queue
+    })))),
+  ])
 
   logger.info(`finished ingressing post '${collectorPostData.id}'`)
 }
 
 const worker = new Worker<CollectorPostData>(environment.BULLMQ_QUEUE_NAME, jobProcessor, {
+  autorun: false,
+  concurrency: environment.WORKER_CONCURRENCY,
   connection: {
     url: environment.BULLMQ_INGRESS_REDIS_URL
+  },
+  settings: {
+    backoffStrategy: attemptsMade => {
+      if (attemptsMade >= environment.WORKER_MAX_ATTEMPTS) {
+        return -1
+      }
+      return environment.WORKER_BACKOFF_DELAY
+    }
   }
+})
+
+enrichersFlowProducer.on('error', error => {
+  logger.error(`enricher flow producer failed with error: ${error}`)
+})
+worker.on('error', error => {
+  logger.error(`worker failed with error: ${error}`)
 })
 
 await worker.run()

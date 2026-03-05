@@ -6,7 +6,7 @@ export const collectorMediaDataType = z.object({
   metadata: z.record(z.string(), z.unknown())
 })
 
-export type collectorMediaData = z.infer<typeof collectorMediaDataType>
+export type CollectorMediaData = z.infer<typeof collectorMediaDataType>
 
 export const collectorPostDataType = z.object({
   collectedAt: z.iso.datetime(),

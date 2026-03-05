@@ -4,11 +4,12 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsx src/main.ts",
-    "run": "node dist/main.js",
+    "run": "node dist/apps/ingress/src/main.js",
     "lint": "eslint"
   },
   "dependencies": {
     "@spron/collectors": "workspace:*",
+    "@spron/enrichers": "workspace:*",
     "@spron/database": "workspace:*",
     "@spron/utils": "workspace:*",
     "bullmq": "^5.70.1",
