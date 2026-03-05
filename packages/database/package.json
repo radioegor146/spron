@@ -1,0 +1,21 @@
+{
+  "name": "@spron/database",
+  "type": "module",
+  "scripts": {
+    "db:push": "prisma db push",
+    "db:generate": "prisma generate",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "@types/pg": "^8.18.0",
+    "pg": "^8.20.0"
+  },
+  "devDependencies": {
+    "@spron/eslint": "workspace:*",
+    "@spron/tsconfig": "workspace:*",
+    "prisma": "^7.4.2"
+  },
+  "exports": {
+    ".": "./src/client.ts"
+  }
+}

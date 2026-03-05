@@ -1,0 +1,7 @@
+{
+  "name": "@spron/tsconfig",
+  "type": "module",
+  "devDependencies": {
+    "typescript": "5.9.2"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "@spron/eslint",
+  "type": "module",
+  "devDependencies": {
+    "eslint": "9"
+  }
+}

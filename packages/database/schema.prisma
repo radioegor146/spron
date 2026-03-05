@@ -1,0 +1,115 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client"
+  output   = "src/generated"
+}
+
+model Post {
+  id                String   @id @default(uuid()) @db.Uuid
+  collectorId       String   @unique
+  url               String?
+  author            Author   @relation(fields: [authorId], references: [id])
+  authorId          String   @db.Uuid
+  createdAt         DateTime
+  collectedAt       DateTime
+  textContent       String
+  collectorMetadata Json     @default("{}") @db.JsonB
+  metadata          Json     @default("{}") @db.JsonB
+
+  @@map("posts")
+}
+
+model Source {
+  id      String   @id @default(uuid()) @db.Uuid
+  type    String   @unique
+  authors Author[]
+
+  @@map("sources")
+}
+
+model Author {
+  id         String  @id @default(uuid()) @db.Uuid
+  idAtSource String
+  source     Source  @relation(fields: [sourceId], references: [id])
+  sourceId   String  @db.Uuid
+  url        String?
+  handle     String?
+  name       String
+  posts      Post[]
+
+  @@unique([idAtSource, sourceId])
+  @@map("authors")
+}
+
+model Tag {
+  id          String                 @id @default(uuid()) @db.Uuid
+  name        String
+  description String
+  embedding   Unsupported("vector")?
+
+  imageTags ImageTag[]
+  videoTags VideoTag[]
+
+  @@map("tags")
+}
+
+model ImageTag {
+  tag   Tag    @relation(fields: [tagId], references: [id])
+  tagId String @db.Uuid
+
+  image   Image  @relation(fields: [imageId], references: [id])
+  imageId String @db.Uuid()
+
+  score Float
+
+  @@id([tagId, imageId])
+  @@map("image_tags")
+}
+
+model Image {
+  id                   String                @id @default(uuid()) @db.Uuid()
+  url                  String
+  description          String?
+  tags                 ImageTag[]
+  deduplicationVector  Unsupported("vector")
+  duplicates           Image[]               @relation("duplicateReference")
+  duplicateReference   Image?                @relation("duplicateReference", fields: [duplicateReferenceId], references: [id])
+  duplicateReferenceId String?               @db.Uuid()
+  embedding            Unsupported("vector")
+  collectorMetadata    Json                  @default("{}") @db.JsonB
+  metadata             Json                  @default("{}") @db.JsonB
+
+  @@map("images")
+}
+
+model VideoTag {
+  tag   Tag    @relation(fields: [tagId], references: [id])
+  tagId String @db.Uuid
+
+  video   Video  @relation(fields: [videoId], references: [id])
+  videoId String @db.Uuid()
+
+  score Float
+
+  @@id([tagId, videoId])
+  @@map("video_tags")
+}
+
+model Video {
+  id                   String                @id @default(uuid()) @db.Uuid()
+  url                  String
+  description          String?
+  tags                 VideoTag[]
+  deduplicationVector  Unsupported("vector")
+  duplicates           Video[]               @relation("duplicateReference")
+  duplicateReference   Video?                @relation("duplicateReference", fields: [duplicateReferenceId], references: [id])
+  duplicateReferenceId String?               @db.Uuid()
+  embedding            Unsupported("vector")
+  collectorMetadata    Json                  @default("{}") @db.JsonB
+  metadata             Json                  @default("{}") @db.JsonB
+
+  @@map("videos")
+}

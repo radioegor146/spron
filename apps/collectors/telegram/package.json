@@ -1,0 +1,17 @@
+{
+  "name": "@spron/collectors-telegram",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/main.ts",
+    "run": "dist/main.js",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "dotenv": "^17.3.1"
+  },
+  "devDependencies": {
+    "@spron/eslint": "workspace:*",
+    "@spron/tsconfig": "workspace:*"
+  }
+}
