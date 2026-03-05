@@ -5,7 +5,9 @@
       "dependsOn": ["db:generate"],
       "outputs": ["dist"]
     },
-    "db:generate": {}
+    "db:generate": {
+      "outputs": ["src/generated"]
+    }
   },
   "extends": ["//"]
 }

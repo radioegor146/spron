@@ -8,16 +8,19 @@ generator client {
 }
 
 model Post {
-  id                String   @id @default(uuid()) @db.Uuid
-  collectorId       String   @unique
+  id                String                 @id @default(uuid()) @db.Uuid
+  collectorId       String                 @unique
   url               String?
-  author            Author   @relation(fields: [authorId], references: [id])
-  authorId          String   @db.Uuid
+  author            Author                 @relation(fields: [authorId], references: [id])
+  authorId          String                 @db.Uuid
   createdAt         DateTime
   collectedAt       DateTime
-  textContent       String
-  collectorMetadata Json     @default("{}") @db.JsonB
-  metadata          Json     @default("{}") @db.JsonB
+  textContent       String?
+  embedding         Unsupported("vector")?
+  collectorMetadata Json                   @default("{}") @db.JsonB
+  metadata          Json                   @default("{}") @db.JsonB
+  images            Image[]
+  videos            Video[]
 
   @@map("posts")
 }
@@ -70,17 +73,20 @@ model ImageTag {
 }
 
 model Image {
-  id                   String                @id @default(uuid()) @db.Uuid()
-  url                  String
+  id                   String                 @id @default(uuid()) @db.Uuid()
+  storageBucket        String
+  storageKey           String
   description          String?
   tags                 ImageTag[]
-  deduplicationVector  Unsupported("vector")
-  duplicates           Image[]               @relation("duplicateReference")
-  duplicateReference   Image?                @relation("duplicateReference", fields: [duplicateReferenceId], references: [id])
-  duplicateReferenceId String?               @db.Uuid()
-  embedding            Unsupported("vector")
-  collectorMetadata    Json                  @default("{}") @db.JsonB
-  metadata             Json                  @default("{}") @db.JsonB
+  deduplicationVector  Unsupported("vector")?
+  duplicates           Image[]                @relation("duplicateReference")
+  duplicateReference   Image?                 @relation("duplicateReference", fields: [duplicateReferenceId], references: [id])
+  duplicateReferenceId String?                @db.Uuid()
+  embedding            Unsupported("vector")?
+  collectorMetadata    Json                   @default("{}") @db.JsonB
+  metadata             Json                   @default("{}") @db.JsonB
+  post                 Post?                  @relation(fields: [postId], references: [id])
+  postId               String?                @db.Uuid
 
   @@map("images")
 }
@@ -99,17 +105,20 @@ model VideoTag {
 }
 
 model Video {
-  id                   String                @id @default(uuid()) @db.Uuid()
-  url                  String
+  id                   String                 @id @default(uuid()) @db.Uuid()
+  storageBucket        String
+  storageKey           String
   description          String?
   tags                 VideoTag[]
-  deduplicationVector  Unsupported("vector")
-  duplicates           Video[]               @relation("duplicateReference")
-  duplicateReference   Video?                @relation("duplicateReference", fields: [duplicateReferenceId], references: [id])
-  duplicateReferenceId String?               @db.Uuid()
-  embedding            Unsupported("vector")
-  collectorMetadata    Json                  @default("{}") @db.JsonB
-  metadata             Json                  @default("{}") @db.JsonB
+  deduplicationVector  Unsupported("vector")?
+  duplicates           Video[]                @relation("duplicateReference")
+  duplicateReference   Video?                 @relation("duplicateReference", fields: [duplicateReferenceId], references: [id])
+  duplicateReferenceId String?                @db.Uuid()
+  embedding            Unsupported("vector")?
+  collectorMetadata    Json                   @default("{}") @db.JsonB
+  metadata             Json                   @default("{}") @db.JsonB
+  post                 Post?                  @relation(fields: [postId], references: [id])
+  postId               String?                @db.Uuid
 
   @@map("videos")
 }
