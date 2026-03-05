@@ -8,11 +8,17 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@spron/collectors": "workspace:*",
     "@spron/database": "workspace:*",
-    "dotenv": "^17.3.1"
+    "@spron/utils": "workspace:*",
+    "bullmq": "^5.70.1",
+    "dotenv": "^17.3.1",
+    "ioredis": "^5.9.3",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@spron/eslint": "workspace:*",
-    "@spron/tsconfig": "workspace:*"
+    "@spron/tsconfig": "workspace:*",
+    "tsx": "^4.21.0"
   }
 }
