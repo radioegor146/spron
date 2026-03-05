@@ -2,8 +2,9 @@ import { parseEnvironment, zodPostgresUrl, zodRedisUrl } from '@spron/utils'
 import z from 'zod'
 
 const environmentType = z.object({
+  BULLMQ_ENRICHERS_REDIS_URL: zodRedisUrl(),
+  BULLMQ_INGRESS_REDIS_URL: zodRedisUrl(),
   BULLMQ_QUEUE_NAME: z.string().default('ingress'),
-  BULLMQ_REDIS_URL: zodRedisUrl(),
 
   DATABASE_URL: zodPostgresUrl(),
 

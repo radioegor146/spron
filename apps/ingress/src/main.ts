@@ -2,11 +2,9 @@ import 'dotenv/config'
 import { CollectorPostData, collectorPostDataType } from '@spron/collectors'
 import { createClient, Image, Video } from '@spron/database'
 import { getLogger } from '@spron/utils'
-import { Job, Worker } from 'bullmq'
-import { Redis } from 'ioredis'
+import { FlowProducer, Job, Worker } from 'bullmq'
 
 import { InputJsonObject } from '../../../packages/database/src/generated/internal/prismaNamespace.js'
-import { createEnricherQueues, EnricherQueue } from './enrichers.js'
 import { getEnvironment } from './environment.js'
 
 const logger = getLogger()
@@ -16,14 +14,11 @@ const prisma = createClient(environment.DATABASE_URL)
 
 await prisma.$connect()
 
-const redisConection = new Redis(environment.BULLMQ_REDIS_URL)
-
-const postEnricherQueues: EnricherQueue[] = createEnricherQueues(environment.POST_ENRICHER_QUEUE_NAMES,
-  redisConection)
-const imageEnricherQueues: EnricherQueue[] = createEnricherQueues(environment.IMAGE_ENRICHER_QUEUE_NAMES,
-  redisConection)
-const videoEnricherQueues: EnricherQueue[] = createEnricherQueues(environment.VIDEO_ENRICHER_QUEUE_NAMES,
-  redisConection)
+const enrichersFlowProducer = new FlowProducer({
+  connection: {
+    url: environment.BULLMQ_ENRICHERS_REDIS_URL
+  }
+})
 
 async function jobProcessor (job: Job<CollectorPostData>): Promise<void> {
   let collectorPostData: CollectorPostData
@@ -92,26 +87,32 @@ async function jobProcessor (job: Job<CollectorPostData>): Promise<void> {
       }))
     })
 
-    await Promise.all(postEnricherQueues.map(async queue => {
-      await queue.add(`post-${post.id}`, post.id)
-    }))
-    for (const image of images) {
-      await Promise.all(imageEnricherQueues.map(async queue => {
-        await queue.add(`image-${image.id}`, image.id)
-      }))
-    }
-    for (const video of videos) {
-      await Promise.all(videoEnricherQueues.map(async queue => {
-        await queue.add(`video-${video.id}`, video.id)
-      }))
-    }
+    await enrichersFlowProducer.addBulk([
+      ...(environment.POST_ENRICHER_QUEUE_NAMES.map(queue => ({
+        data: post.id,
+        name: `post-${post.id}`,
+        queueName: queue
+      }))),
+      ...(environment.IMAGE_ENRICHER_QUEUE_NAMES.flatMap(queue => images.map(image => ({
+        data: image.id,
+        name: `image-${image.id}`,
+        queueName: queue
+      })))),
+      ...(environment.VIDEO_ENRICHER_QUEUE_NAMES.flatMap(queue => videos.map(video => ({
+        data: video.id,
+        name: `video-${video.id}`,
+        queueName: queue
+      })))),
+    ])
   })
 
   logger.info(`finished ingressing post '${collectorPostData.id}'`)
 }
 
 const worker = new Worker<CollectorPostData>(environment.BULLMQ_QUEUE_NAME, jobProcessor, {
-  connection: redisConection
+  connection: {
+    url: environment.BULLMQ_INGRESS_REDIS_URL
+  }
 })
 
 await worker.run()
