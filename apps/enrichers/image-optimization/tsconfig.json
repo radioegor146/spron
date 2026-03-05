@@ -1,0 +1,8 @@
+{
+  "extends": "@spron/tsconfig/base.json",
+  "include": ["src"],
+  "exclude": ["dist", "node_modules"],
+  "compilerOptions": {
+    "outDir": "dist"
+  }
+}

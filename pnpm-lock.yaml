@@ -82,7 +82,55 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/tsconfig
 
+  apps/enrichers/embedding:
+    dependencies:
+      '@spron/database':
+        specifier: workspace:*
+        version: link:../../../packages/database
+      dotenv:
+        specifier: ^17.3.1
+        version: 17.3.1
+    devDependencies:
+      '@spron/eslint':
+        specifier: workspace:*
+        version: link:../../../packages/eslint
+      '@spron/tsconfig':
+        specifier: workspace:*
+        version: link:../../../packages/tsconfig
+
+  apps/enrichers/image-optimization:
+    dependencies:
+      '@spron/database':
+        specifier: workspace:*
+        version: link:../../../packages/database
+      dotenv:
+        specifier: ^17.3.1
+        version: 17.3.1
+    devDependencies:
+      '@spron/eslint':
+        specifier: workspace:*
+        version: link:../../../packages/eslint
+      '@spron/tsconfig':
+        specifier: workspace:*
+        version: link:../../../packages/tsconfig
+
   apps/enrichers/tags:
+    dependencies:
+      '@spron/database':
+        specifier: workspace:*
+        version: link:../../../packages/database
+      dotenv:
+        specifier: ^17.3.1
+        version: 17.3.1
+    devDependencies:
+      '@spron/eslint':
+        specifier: workspace:*
+        version: link:../../../packages/eslint
+      '@spron/tsconfig':
+        specifier: workspace:*
+        version: link:../../../packages/tsconfig
+
+  apps/enrichers/video-optimization:
     dependencies:
       '@spron/database':
         specifier: workspace:*
