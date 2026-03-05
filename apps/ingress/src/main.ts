@@ -1,6 +1,4 @@
 import 'dotenv/config'
-import { PrismaClient } from '@spron/database'
+import { createClient } from '@spron/database'
 
-console.log('started')
-
-const client = new PrismaClient({})
+createClient('test')
