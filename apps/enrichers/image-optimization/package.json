@@ -9,7 +9,13 @@
   },
   "dependencies": {
     "@spron/database": "workspace:*",
-    "dotenv": "^17.3.1"
+    "@spron/enrichers": "workspace:*",
+    "@spron/storage": "workspace:*",
+    "@spron/utils": "workspace:*",
+    "bullmq": "^5.70.1",
+    "dotenv": "^17.3.1",
+    "sharp": "^0.34.5",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@spron/eslint": "workspace:*",

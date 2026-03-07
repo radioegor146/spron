@@ -1,4 +1,4 @@
 {
   "extends": "@spron/tsconfig/base.json",
-  "include": ["src"]
+  "include": ["src"] 
 }

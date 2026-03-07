@@ -1,5 +1,5 @@
 {
-  "name": "@spron/enrichers-description",
+  "name": "@spron/embeddor",
   "type": "module",
   "scripts": {
     "build": "tsc",
@@ -8,19 +8,16 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@spron/database": "workspace:*",
-    "@spron/enrichers": "workspace:*",
-    "@spron/storage": "workspace:*",
+    "@elysiajs/node": "^1.4.5",
     "@spron/utils": "workspace:*",
+    "@spron/embeddor-api": "workspace:*",
     "dotenv": "^17.3.1",
-    "ffmpeg-static": "^5.3.0",
-    "ffprobe-static": "^3.1.0",
+    "elysia": "^1.4.27",
     "openai": "^6.27.0",
     "zod": "^4.3.6"
   },
   "devDependencies": {
     "@spron/eslint": "workspace:*",
-    "@spron/tsconfig": "workspace:*",
-    "@types/ffprobe-static": "^2.0.3"
+    "@spron/tsconfig": "workspace:*"
   }
 }

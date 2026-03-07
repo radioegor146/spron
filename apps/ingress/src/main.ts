@@ -2,11 +2,14 @@ import 'dotenv/config'
 import { CollectorPostData, collectorPostDataType } from '@spron/collectors'
 import { createClient } from '@spron/database'
 import { EnricherJobName } from '@spron/enrichers'
-import { getLogger } from '@spron/utils'
+import { backoffStrategy, getLogger } from '@spron/utils'
 import { FlowProducer, Job, Worker } from 'bullmq'
 
-import { InputJsonObject } from '../../../packages/database/src/generated/internal/prismaNamespace.js'
 import { getEnvironment } from './environment.js'
+
+type InputJsonObject = {
+  [k: string]: boolean | number | string
+}
 
 const logger = getLogger()
 const environment = getEnvironment()
@@ -88,7 +91,7 @@ async function jobProcessor (job: Job<CollectorPostData>): Promise<void> {
         url: collectorPostData.url
       }
     })
-    const images = await txn.image.createManyAndReturn({
+    const images = await txn.video.createManyAndReturn({
       data: collectorPostData.content.images.map(image => ({
         collectorMetadata: image.metadata as InputJsonObject,
         postId: post.id,
@@ -149,12 +152,7 @@ const worker = new Worker<CollectorPostData>(environment.BULLMQ_QUEUE_NAME, jobP
     url: environment.BULLMQ_INGRESS_REDIS_URL
   },
   settings: {
-    backoffStrategy: attemptsMade => {
-      if (attemptsMade >= environment.WORKER_MAX_ATTEMPTS) {
-        return -1
-      }
-      return environment.WORKER_BACKOFF_DELAY
-    }
+    backoffStrategy: backoffStrategy(environment)
   }
 })
 

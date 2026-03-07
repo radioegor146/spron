@@ -1,5 +1,5 @@
 {
-  "name": "@spron/collectors",
+  "name": "@spron/embeddor-api",
   "type": "module",
   "scripts": {
     "lint": "eslint"
@@ -8,10 +8,10 @@
     "zod": "^4.3.6"
   },
   "exports": {
-    ".": "./src/collectors.ts"
+    ".": "./src/embeddor.ts"
   },
   "devDependencies": {
-    "@spron/tsconfig": "workspace:*",
-    "@spron/eslint": "workspace:*"
+    "@spron/eslint": "workspace:*",
+    "@spron/tsconfig": "workspace:*"
   }
 }

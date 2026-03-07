@@ -4,8 +4,7 @@
   "scripts": {
     "db:push": "prisma db push",
     "db:generate": "prisma generate",
-    "lint": "eslint",
-    "build": "tsc"
+    "lint": "eslint"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.4.2",
@@ -19,9 +18,6 @@
     "prisma": "^7.4.2"
   },
   "exports": {
-    ".": {
-      "types": "./src/client.ts",
-      "default": "./dist/client.js"
-    }
+    ".": "./src/database.ts"
   }
 }

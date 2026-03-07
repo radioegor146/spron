@@ -2,18 +2,14 @@
   "name": "@spron/utils",
   "type": "module",
   "scripts": {
-    "lint": "eslint",
-    "build": "tsc"
+    "lint": "eslint"
   },
   "dependencies": {
     "tslog": "^4.10.2",
     "zod": "^4.3.6"
   },
   "exports": {
-    ".": {
-      "types": "./src/utils.ts",
-      "default": "./dist/utils.js"
-    }
+    ".": "./src/utils.ts"
   },
   "devDependencies": {
     "@types/node": "^25.3.3",
