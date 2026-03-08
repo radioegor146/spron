@@ -1,3 +1,3 @@
 uv venv
-.venv\Sciprts\activate
+.venv\Scripts\activate
 uv pip install -r requirements.txt
