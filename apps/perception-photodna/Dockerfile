@@ -5,6 +5,6 @@ RUN wget https://releases.astral.sh/github/uv/releases/download/0.6.17/uv-x86_64
 RUN unzip uv.zip
 RUN wine uv python install 
 COPY requirements.txt requirements.txt
-RUN wine uv pip install -r requirements.txt
+RUN wine uv pip install -r requirements.txt --system
 COPY . . 
 CMD ["wine", "uv run python main.py"]
