@@ -5,6 +5,6 @@ RUN wget https://releases.astral.sh/github/uv/releases/download/0.6.17/uv-x86_64
 RUN unzip uv.zip
 RUN wine uv python install 
 COPY requirements.txt requirements.txt
-RUN wine -- cmd.exe /c ".venv\\Sciprts\\activate && uv pip install -r requirements.txt"
+RUN wine install.bat
 COPY . . 
-CMD ["wine", "--", "cmd.exe /c \".venv\\Sciprts\\activate && python main.py\""]
+CMD ["wine", "run.bat"]
