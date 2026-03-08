@@ -79,10 +79,12 @@ model Image {
   optimized            Boolean                @default(false)
   description          String?
   tags                 ImageTag[]
+  tagsSet              Boolean                @default(false)
   deduplicationVector  Unsupported("vector")?
   duplicates           Image[]                @relation("duplicateReference")
   duplicateReference   Image?                 @relation("duplicateReference", fields: [duplicateReferenceId], references: [id])
   duplicateReferenceId String?                @db.Uuid()
+  duplicateSimilarity  Float?
   embedding            Unsupported("vector")?
   collectorMetadata    Json                   @default("{}") @db.JsonB
   metadata             Json                   @default("{}") @db.JsonB
@@ -112,6 +114,7 @@ model Video {
   optimized            Boolean                @default(false)
   description          String?
   tags                 VideoTag[]
+  tagsSet              Boolean                @default(false)
   deduplicationVector  Unsupported("vector")?
   duplicates           Video[]                @relation("duplicateReference")
   duplicateReference   Video?                 @relation("duplicateReference", fields: [duplicateReferenceId], references: [id])

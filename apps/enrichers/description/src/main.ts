@@ -142,7 +142,7 @@ async function processImage (imageId: string): Promise<boolean> {
 
   if (image.description !== null) {
     logger.warn(`image '${imageId}' already has description`)
-    return false
+    return true
   }
 
   const base64Image = getAsBase64Data(await getAsBuffer(await storage.getDownloadStream({
@@ -188,21 +188,6 @@ async function processImage (imageId: string): Promise<boolean> {
   return true
 }
 
-async function processor (type: EnricherJobName, id: string): Promise<boolean> {
-  switch (type) {
-    case EnricherJobName.ENRICH_IMAGE: {
-      return await processImage(id)
-    }
-    case EnricherJobName.ENRICH_VIDEO: {
-      return await processVideo(id)
-    }
-    default: {
-      logger.warn(`received non image or video job: '${type}'`)
-      return false
-    }
-  }
-}
-
 async function processVideo (videoId: string): Promise<boolean> {
   const video = await prisma.video.findFirst({
     where: {
@@ -214,9 +199,10 @@ async function processVideo (videoId: string): Promise<boolean> {
     logger.warn(`video '${videoId}' not found`)
     return false
   }
+
   if (video.description !== null) {
     logger.warn(`video '${videoId}' already has description`)
-    return false
+    return true
   }
 
   const { fps, images } = await getVideoImageFramesAsBase64({
@@ -283,7 +269,10 @@ async function run (binary: string, arguments_: string[]): Promise<string> {
   })
 }
 
-const enricher = createEnricher(environment, processor)
+const enricher = createEnricher(environment, {
+  [EnricherJobName.ENRICH_IMAGE]: processImage,
+  [EnricherJobName.ENRICH_VIDEO]: processVideo
+})
 
 await enricher.run()
 logger.info('enricher started')

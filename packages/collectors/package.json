@@ -2,13 +2,17 @@
   "name": "@spron/collectors",
   "type": "module",
   "scripts": {
-    "lint": "eslint"
+    "lint": "eslint",
+    "build": "tsc"
   },
   "dependencies": {
     "zod": "^4.3.6"
   },
   "exports": {
-    ".": "./src/collectors.ts"
+    ".": {
+      "types": "./src/collectors.ts",
+      "default": "./dist/collectors.js"
+    }
   },
   "devDependencies": {
     "@spron/tsconfig": "workspace:*",

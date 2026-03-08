@@ -22,7 +22,7 @@ interface EnricherEnvironment extends BackoffStrategyEnvironment {
   BULLMQ_REDIS_URL: string
 }
 
-type EnricherProcessor = (type: EnricherJobName, id: string) => Promise<boolean>
+type EnricherProcessor = Partial<Record<EnricherJobName, (id: string) => Promise<boolean>>>
 
 const logger = getLogger()
 
@@ -43,7 +43,13 @@ export function createEnricher (environment: EnricherEnvironment, processor: Enr
       return
     }
 
-    const mustContinue = await processor(type, id)
+    const currentTypeProcessor = processor[type]
+    if (!currentTypeProcessor) {
+      logger.warn(`unsupported enricher type: '${type}'`)
+      return
+    }
+
+    const mustContinue = await currentTypeProcessor(id)
     if (mustContinue) {
       await outputFlowProducer.addBulk(environment.BULLMQ_OUTPUT_QUEUE_NAMES.map(queue => ({
         backoff: {

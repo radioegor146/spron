@@ -2,7 +2,8 @@
   "name": "@spron/enrichers",
   "type": "module",
   "scripts": {
-    "lint": "eslint"
+    "lint": "eslint",
+    "build": "tsc"
   },
   "dependencies": {
     "@spron/utils": "workspace:*",
@@ -10,7 +11,10 @@
     "zod": "^4.3.6"
   },
   "exports": {
-    ".": "./src/enrichers.ts"
+    ".": {
+      "types": "./src/enrichers.ts",
+      "default": "./dist/enrichers.js"
+    }
   },
   "devDependencies": {
     "@spron/eslint": "workspace:*",

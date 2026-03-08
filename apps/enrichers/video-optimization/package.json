@@ -3,8 +3,8 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "dev": "tsx src/main.ts",
-    "run": "dist/main.js",
+    "dev": "turbo build && tsx src/main.ts",
+    "run": "node dist/main.js",
     "lint": "eslint"
   },
   "dependencies": {

@@ -20,12 +20,7 @@ const videoOptimizer = new VideoOptimizer({
 
 await prisma.$connect()
 
-async function processor (type: EnricherJobName, videoId: string): Promise<boolean> {
-  if (type !== EnricherJobName.ENRICH_VIDEO) {
-    logger.warn(`received non video job: '${type}'`)
-    return false
-  }
-
+async function processor (videoId: string): Promise<boolean> {
   const video = await prisma.video.findFirst({
     where: {
       id: videoId
@@ -68,7 +63,9 @@ async function processor (type: EnricherJobName, videoId: string): Promise<boole
   return true
 }
 
-const enricher = createEnricher(environment, processor)
+const enricher = createEnricher(environment, {
+  [EnricherJobName.ENRICH_VIDEO]: processor
+})
 
 await enricher.run()
 logger.info('enricher started')

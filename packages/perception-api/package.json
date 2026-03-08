@@ -1,23 +1,22 @@
 {
-  "name": "@spron/utils",
+  "name": "@spron/perception-api",
   "type": "module",
   "scripts": {
     "lint": "eslint",
     "build": "tsc"
   },
   "dependencies": {
-    "tslog": "^4.10.2",
     "zod": "^4.3.6"
   },
   "exports": {
     ".": {
-      "types": "./src/utils.ts",
-      "default": "./dist/utils.js"
+      "default": "./dist/perception.js",
+      "types": "./src/perception.ts"
     }
   },
   "devDependencies": {
-    "@types/node": "^25.3.3",
+    "@spron/eslint": "workspace:*",
     "@spron/tsconfig": "workspace:*",
-    "@spron/eslint": "workspace:*"
+    "@types/node": "^25.3.3"
   }
 }

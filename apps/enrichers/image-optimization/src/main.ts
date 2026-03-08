@@ -19,12 +19,7 @@ const imageOptimizer = new ImageOptimizer({
 
 await prisma.$connect()
 
-async function processor (type: EnricherJobName, imageId: string): Promise<boolean> {
-  if (type !== EnricherJobName.ENRICH_IMAGE) {
-    logger.warn(`received non image job: '${type}'`)
-    return false
-  }
-
+async function processor (imageId: string): Promise<boolean> {
   const image = await prisma.image.findFirst({
     where: {
       id: imageId
@@ -67,7 +62,9 @@ async function processor (type: EnricherJobName, imageId: string): Promise<boole
   return true
 }
 
-const enricher = createEnricher(environment, processor)
+const enricher = createEnricher(environment, {
+  [EnricherJobName.ENRICH_IMAGE]: processor
+})
 
 await enricher.run()
 logger.info('enricher started')

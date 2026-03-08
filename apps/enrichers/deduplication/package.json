@@ -3,13 +3,18 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "dev": "tsx src/main.ts",
-    "run": "dist/main.js",
+    "dev": "turbo build && tsx src/main.ts",
+    "run": "node dist/main.js",
     "lint": "eslint"
   },
   "dependencies": {
     "@spron/database": "workspace:*",
-    "dotenv": "^17.3.1"
+    "@spron/enrichers": "workspace:*",
+    "@spron/utils": "workspace:*",
+    "@spron/storage": "workspace:*",
+    "@spron/perception-api": "workspace:*",
+    "dotenv": "^17.3.1",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@spron/eslint": "workspace:*",
