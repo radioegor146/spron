@@ -15,7 +15,7 @@ const environmentType = z.object({
   S3_STORAGE_REGION: z.string().default('us-east-1'),
   S3_STORAGE_SECRET_KEY: z.string(),
 
-  SIMILARITY_THRESHOLD: z.string().default('0.97').transform(Number),
+  SIMILARITY_THRESHOLD: z.string().default('0.99993').transform(Number),
 
   WORKER_BACKOFF_DELAY: z.string().default('10000').transform(Number),
   WORKER_CONCURRENCY: z.string().default('4').transform(Number),
