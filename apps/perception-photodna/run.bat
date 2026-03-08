@@ -1,2 +1,2 @@
-.venv\Sciprts\activate
+.venv\Scripts\activate
 python main.py
