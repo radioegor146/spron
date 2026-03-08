@@ -61,7 +61,7 @@ async def create_vector(
     if content_type != "image/jpeg":
         raise HTTPException(
             status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
-            detail="content-Type must be image/jpeg",
+            detail="content-type must be image/jpeg",
         )
     if not payload:
         raise HTTPException(status_code=400, detail="empty body")
