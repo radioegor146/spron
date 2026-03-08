@@ -8,4 +8,5 @@ RUN wine uv venv
 COPY requirements.txt requirements.txt
 RUN wine uv pip install -r requirements.txt
 COPY . . 
+ENV PYTHONUNBUFFERED=1
 CMD ["wine", "uv", "run", "python", "main.py"]
